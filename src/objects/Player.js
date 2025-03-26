@@ -189,14 +189,24 @@ export default class Player {
   }
 
   checkTile() {
-    const col = Math.floor(this.sprite.x / this.tileSize);
+    // Account for the sidebar offset when calculating grid position
+    const offsetX = 200; // SIDEBAR_WIDTH
+    const col = Math.floor((this.sprite.x - offsetX) / this.tileSize);
     const row = Math.floor(this.sprite.y / this.tileSize);
+    
+    console.log(`Player ${this.playerId + 1} attempting to hammer at [${col}, ${row}]`);
+    
     const grid = this.scene.grid;
-    if (!grid[row] || !grid[row][col]) return;
+    if (!grid[row] || !grid[row][col]) {
+      console.log(`❌ Spieler ${this.playerId + 1}: Außerhalb des Spielfelds`);
+      return;
+    }
 
     const tile = grid[row][col];
     const status = tile.data.get("status");
     let schläge = tile.data.get("schläge") || 0;
+
+    console.log(`Tile status: ${status}, Schläge: ${schläge}`);
 
     if (status !== "aktiv") {
       console.log(`❌ Spieler ${this.playerId + 1}: Hier darf nicht gehämmert werden.`);
@@ -214,6 +224,7 @@ export default class Player {
 
     schläge++;
     tile.data.set("schläge", schläge);
+    console.log(`Hammered tile, new Schläge count: ${schläge}`);
 
     if (schläge === 1) tile.setTexture("tile_kaputt1");
     else if (schläge === 2) tile.setTexture("tile_kaputt2");
@@ -242,7 +253,9 @@ export default class Player {
   }
 
   tryRepair() {
-    const col = Math.floor(this.sprite.x / this.tileSize);
+    // Also fix grid coordinates for repair function
+    const offsetX = 200; // SIDEBAR_WIDTH
+    const col = Math.floor((this.sprite.x - offsetX) / this.tileSize);
     const row = Math.floor(this.sprite.y / this.tileSize);
     const grid = this.scene.grid;
     if (!grid[row] || !grid[row][col]) return;
@@ -275,7 +288,9 @@ export default class Player {
   }
 
   tryPlaceTile() {
-    const col = Math.floor(this.sprite.x / this.tileSize);
+    // Also fix grid coordinates for place tile function
+    const offsetX = 200; // SIDEBAR_WIDTH
+    const col = Math.floor((this.sprite.x - offsetX) / this.tileSize);
     const row = Math.floor(this.sprite.y / this.tileSize);
     const grid = this.scene.grid;
     if (!grid[row] || !grid[row][col]) return;
