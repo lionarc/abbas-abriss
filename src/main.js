@@ -44,7 +44,9 @@ const config = {
         Phaser.Input.Keyboard.KeyCodes.K,
         Phaser.Input.Keyboard.KeyCodes.L,
         Phaser.Input.Keyboard.KeyCodes.O,
-        Phaser.Input.Keyboard.KeyCodes.U
+        Phaser.Input.Keyboard.KeyCodes.U,
+        Phaser.Input.Keyboard.KeyCodes.ENTER,
+        Phaser.Input.Keyboard.KeyCodes.ESC   // Add ESC key to the captured keys
       ]
     }
   },

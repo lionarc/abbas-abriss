@@ -49,7 +49,7 @@ export default class MissionScene extends Phaser.Scene {
       "• Spieler 2 kann nur Fliesen holen (4 Stück pro Lauf) - für neue Böden",
         "Habt ihr zu viel Material, müsst ihr es wegwerfen. Achtung, das kommt auf die Zeit obendrauf",
       "• Zusammen müsst ihr alle Fliesen reparieren - die Zeit wird gestoppt!",
-      "• Achtet auf eure Energie, sammelt Kaffee für einen 20-Sekunden-Boost",
+      "• Achtet auf eure Energie, sammelt Kaffee für einen Energieboost!",
       "",
       "Arbeitet als Team zusammen, um den Balkon möglichst schnell zu sanieren!"
     ].join("\n");

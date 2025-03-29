@@ -95,8 +95,11 @@ export default class GameScene extends Phaser.Scene {
     // Start the game timer
     this.startGameTimer();
     
-    // Add cheat button for testing
-    this.createCheatButton();
+    // Comment out the debug button
+    // this.createCheatButton();
+    
+    // Add restart button
+    this.createRestartButton();
   }
 
   setupGameWorld() {
@@ -174,9 +177,9 @@ export default class GameScene extends Phaser.Scene {
       });
     });
     
-    // Schedule first coffee spawn
+    // Schedule first coffee spawn - reduced initial delay
     this.time.delayedCall(
-      Phaser.Math.Between(5000, 15000), // 5-15 seconds delay
+      Phaser.Math.Between(3000, 8000), // 3-8 seconds delay (was 5-15)
       this.spawnCoffee,
       [],
       this
@@ -251,9 +254,9 @@ export default class GameScene extends Phaser.Scene {
         onComplete: () => coffeeEffect.destroy()
       });
       
-      // Schedule next coffee spawn
+      // Schedule next coffee spawn - reduce delay between coffee spawns
       this.time.delayedCall(
-        Phaser.Math.Between(20000, 40000), // 20-40 seconds delay
+        Phaser.Math.Between(10000, 20000), // 10-20 seconds delay (was 20-40)
         this.spawnCoffee,
         [],
         this
@@ -493,5 +496,66 @@ export default class GameScene extends Phaser.Scene {
     
     // Update the UI and completion status
     this.updateFertigStatus();
+  }
+
+  createRestartButton() {
+    // Create a restart button in the bottom right corner
+    const buttonX = this.scale.width - 80;
+    const buttonY = this.scale.height - 30;
+    
+    // Create button background
+    const restartButton = this.add.rectangle(
+      buttonX,
+      buttonY,
+      150,
+      40,
+      0x990000
+    ).setOrigin(1, 1).setInteractive().setAlpha(0.7);
+    
+    // Add text
+    this.add.text(
+      buttonX - 75,
+      buttonY - 20,
+      "Neu starten (ESC)",
+      { 
+        font: "14px Arial", 
+        fill: "#ffffff",
+        stroke: "#000000",
+        strokeThickness: 2
+      }
+    ).setOrigin(0.5, 0.5);
+    
+    // Button effects
+    restartButton.on("pointerover", () => restartButton.fillColor = 0xcc0000);
+    restartButton.on("pointerout", () => restartButton.fillColor = 0x990000);
+    restartButton.on("pointerdown", () => restartButton.fillColor = 0x660000);
+    
+    // Restart function
+    const restartGame = () => {
+      // Add confirmation text
+      const confirmText = this.add.text(
+        this.scale.width / 2,
+        this.scale.height / 2,
+        "Spiel wird neu gestartet...",
+        {
+          font: "bold 24px Arial",
+          fill: "#ffffff",
+          backgroundColor: "#000000",
+          padding: { x: 20, y: 10 }
+        }
+      ).setOrigin(0.5).setDepth(1000);
+      
+      // Delay the restart slightly
+      this.time.delayedCall(500, () => {
+        window.location.reload();
+      });
+    };
+    
+    // Add click handler
+    restartButton.on("pointerup", restartGame);
+    
+    // Add ESC key handler
+    const escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    escKey.on("down", restartGame);
   }
 }

@@ -7,8 +7,8 @@ export default class VitalitySystem {
     
     // Vitality properties
     this.vitality = 100;
-    this.vitalityDecayRate = 2; // How fast vitality depletes when moving (per second)
-    this.vitalityRecoveryRate = 1; // How fast vitality recovers when standing still (per second)
+    this.vitalityDecayRate = 1.5; // Reduced from 2 to 1.5
+    this.vitalityRecoveryRate = 1.5; // Increased from 1 to 1.5
     
     // Coffee effect properties
     this.coffeeEffectTimer = null;
@@ -65,7 +65,7 @@ export default class VitalitySystem {
         this.coffeeIcon.setVisible(true);
       }
       
-      // Add energy boost - larger boost of 50 points
+      // Add energy boost - larger boost of 50 points (was 50)
       this.addVitality(50);
       
       console.log(`☕ Player ${this.player.playerId + 1} got energy boost and is immune to energy loss for 20 seconds!`);
@@ -74,7 +74,7 @@ export default class VitalitySystem {
       const durationText = this.scene.add.text(
         this.player.sprite.x,
         this.player.sprite.y - 80,
-        "20s Energieschutz!",
+        "Danke P3!",
         {
           font: "14px Arial",
           fill: "#ffffff",
@@ -133,7 +133,7 @@ export default class VitalitySystem {
     const expiredText = this.scene.add.text(
       this.player.sprite.x,
       this.player.sprite.y - 50,
-      "Kaffee-Effekt vorbei!",
+      "Lecker war's danke!",
       {
         font: "14px Arial",
         fill: "#ff9900",

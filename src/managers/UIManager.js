@@ -27,7 +27,7 @@ export default class UIManager {
     
     // Player 1 UI (left sidebar) - Wood specialist
     const p1X = 10;
-    const p1Y = 60;
+    const p1Y = 60; // Moved down by 30px (was 60)
     let verticalSpacing = 70;
     
     this.player1UI = {
@@ -36,7 +36,8 @@ export default class UIManager {
         fill: "#0000ff",
         wordWrap: { width: SIDEBAR_WIDTH - 20 }
       }),
-      role: this.scene.add.text(p1X, p1Y + 20, "Holz-Spezialist", {
+      role: this.scene.add.text(p1X, p1Y + 200
+        , "Holz-Spezialist", {
         font: "16px Arial",
         fill: "#ffffff",
         fontStyle: "italic"
@@ -51,7 +52,7 @@ export default class UIManager {
     
     // Player 2 UI (right sidebar) - Tile specialist
     const p2X = this.scene.scale.width - SIDEBAR_WIDTH + 10;
-    const p2Y = 60;
+    const p2Y = 60; // Moved down by 30px (was 60)
     
     this.player2UI = {
       title: this.scene.add.text(p2X, 20, this.scene.playerNames[1], { 
@@ -59,7 +60,7 @@ export default class UIManager {
         fill: "#ff0000",
         wordWrap: { width: SIDEBAR_WIDTH - 20 }
       }),
-      role: this.scene.add.text(p2X, p2Y + 20, "Fliesen-Spezialist", {
+      role: this.scene.add.text(p2X, p2Y + 200, "Fliesen-Spezialist", {
         font: "16px Arial",
         fill: "#ffffff",
         fontStyle: "italic"

@@ -15,6 +15,9 @@ export default class Player {
     
     // Initialize systems
     this.controls = new ControlsManager(this);
+
+    
+
     
     // Set up different inventory capacities for each player
     this.inventory = playerId === 0 
@@ -59,7 +62,16 @@ export default class Player {
       fill: this.playerId === 0 ? "#0000ff" : "#ff0000", // Blue for P1, Red for P2
     }).setOrigin(0.5);
 
+    // Tiles count label
     this.fliesenCountLabel = this.scene.add.text(x + 15, y - 38, "", {
+      font: "14px Arial",
+      fill: "#fff",
+      backgroundColor: this.playerId === 0 ? "#0000ff" : "#ff0000",
+      padding: { x: 4, y: 2 },
+    }).setOrigin(0.5);
+    
+    // Wood count label - new!
+    this.holzCountLabel = this.scene.add.text(x + 15, y - 38, "", {
       font: "14px Arial",
       fill: "#fff",
       backgroundColor: this.playerId === 0 ? "#0000ff" : "#ff0000",
@@ -102,6 +114,8 @@ export default class Player {
     this.label.y = this.sprite.y - 30;
     this.fliesenCountLabel.x = this.sprite.x + 15;
     this.fliesenCountLabel.y = this.sprite.y - 38;
+    this.holzCountLabel.x = this.sprite.x + 15;
+    this.holzCountLabel.y = this.sprite.y - 38;
 
     // Update coffee icon if it exists
     if (this.vitalitySystem.coffeeIcon && this.vitalitySystem.coffeeIcon.visible) {
@@ -119,8 +133,16 @@ export default class Player {
     if (this.inventory.fliese > 0) {
       this.fliesenCountLabel.setText(this.inventory.fliese);
       this.fliesenCountLabel.setVisible(true);
+      this.holzCountLabel.setVisible(false); // Hide wood count when showing tiles
+    } else if (this.inventory.holz > 0) {
+      // Show wood count
+      this.holzCountLabel.setText(this.inventory.holz);
+      this.holzCountLabel.setVisible(true);
+      this.fliesenCountLabel.setVisible(false); // Hide tiles count when showing wood
     } else {
+      // Hide both count labels when there's nothing in inventory
       this.fliesenCountLabel.setVisible(false);
+      this.holzCountLabel.setVisible(false);
     }
   }
   

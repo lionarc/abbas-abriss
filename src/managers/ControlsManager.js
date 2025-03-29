@@ -108,7 +108,8 @@ export default class ControlsManager {
       } catch (error) {
         console.error(`Error during tile check for Player ${this.player.playerId + 1}:`, error);
       }
-      this.player.vitalitySystem.vitality -= 5; // Hammering costs vitality
+      // Reduce vitality cost from 5 to just 2 for hammering
+      this.player.vitalitySystem.vitality -= 2;
     } else {
       console.log(`❌ Spieler ${this.player.playerId + 1}: Du kannst nur ohne Material Fliesen zerschlagen!`);
     }
