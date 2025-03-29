@@ -89,7 +89,7 @@ export default class NameEntryScene extends Phaser.Scene {
     this.confirmText = this.add.text(
       this.scale.width / 2,
       this.scale.height / 2 + 110,
-      "Bestätigen",
+      "Bestätigen (ENTER)",
       {
         font: "bold 16px Arial",
         fill: "#ffffff"

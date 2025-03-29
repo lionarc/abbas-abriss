@@ -77,6 +77,11 @@ export default class MissionScene extends Phaser.Scene {
       console.warn("Could not load balcony image:", error);
     }
     
+    // Function to continue to name entry
+    const startNameEntry = () => {
+      this.scene.start("NameEntryScene");
+    };
+    
     // Accept mission button
     const acceptButton = this.add.rectangle(
       this.scale.width / 2,
@@ -89,7 +94,7 @@ export default class MissionScene extends Phaser.Scene {
     this.add.text(
       this.scale.width / 2,
       this.scale.height - 60,
-      "Auftrag annehmen",
+      "Auftrag annehmen (ENTER)",
       {
         font: "bold 16px Arial",
         fill: "#ffffff"
@@ -110,8 +115,10 @@ export default class MissionScene extends Phaser.Scene {
       acceptButton.fillColor = 0x009900;
     });
     
-    acceptButton.on("pointerup", () => {
-      this.scene.start("NameEntryScene");
-    });
+    acceptButton.on("pointerup", startNameEntry);
+    
+    // Add Enter key handler
+    const enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    enterKey.on('down', startNameEntry);
   }
 }

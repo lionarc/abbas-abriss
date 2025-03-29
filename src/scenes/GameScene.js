@@ -94,6 +94,9 @@ export default class GameScene extends Phaser.Scene {
     
     // Start the game timer
     this.startGameTimer();
+    
+    // Add cheat button for testing
+    this.createCheatButton();
   }
 
   setupGameWorld() {
@@ -428,5 +431,67 @@ export default class GameScene extends Phaser.Scene {
         wasteCount: this.wasteCount
       });
     });
+  }
+
+  createCheatButton() {
+    // Create a small button in the top-right corner
+    const cheatButton = this.add.rectangle(
+      this.scale.width - 80,
+      10,
+      150,
+      20,
+      0x990000
+    ).setOrigin(0, 0).setInteractive().setAlpha(0.7);
+    
+    // Add text
+    this.add.text(
+      this.scale.width - 5,
+      20,
+      "DEBUG: Win Game",
+      { font: "12px Arial", fill: "#ffffff" }
+    ).setOrigin(1, 0.5);
+    
+    // Add click handler
+    cheatButton.on('pointerdown', () => {
+      this.repairAllTiles();
+    });
+  }
+
+  repairAllTiles() {
+    console.log("🛠️ DEBUG: Auto-repairing all tiles");
+    
+    // Find all tiles that need repairing
+    const allTiles = this.gridSystem.grid.flat();
+    
+    // First make all morsch tiles intakt
+    allTiles.forEach(tile => {
+      const status = tile.data.get("status");
+      const balken = tile.data.get("balken");
+      
+      if (status === "fertig" && balken === "morsch") {
+        tile.data.set("balken", "intakt");
+        tile.setTexture("tile_kaputt4_intakt");
+      }
+    });
+    
+    // Then place new tiles on all fertig tiles
+    allTiles.forEach(tile => {
+      const status = tile.data.get("status");
+      const balken = tile.data.get("balken");
+      
+      if (status === "fertig" && balken === "intakt") {
+        tile.data.set("status", "final");
+        tile.setTexture("tile_neu");
+      }
+      
+      // Also convert any active tiles to final immediately
+      if (status === "aktiv" || status === "leer") {
+        tile.data.set("status", "final");
+        tile.setTexture("tile_neu");
+      }
+    });
+    
+    // Update the UI and completion status
+    this.updateFertigStatus();
   }
 }

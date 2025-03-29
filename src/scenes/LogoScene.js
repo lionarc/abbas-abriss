@@ -37,17 +37,23 @@ export default class LogoScene extends Phaser.Scene {
       duration: 1500,
       ease: "Power2",
       onComplete: () => {
-        // After logo appears fully, add click handler to continue
-        this.input.once("pointerdown", () => {
-          // Directly go to the mission scene without explosion animation
+        // Function to continue to next scene
+        const continueToNextScene = () => {
           this.scene.start("MissionScene");
-        });
+        };
+        
+        // After logo appears fully, add click handler to continue
+        this.input.once("pointerdown", continueToNextScene);
+        
+        // Also allow pressing Enter to continue
+        const enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        enterKey.once('down', continueToNextScene);
         
         // Add text to indicate what to do - now in the center below the logo
         const clickText = this.add.text(
           this.scale.width / 2,
           this.scale.height / 2 + 80, // Positioned below the logo
-          "Klicken um fortzufahren",
+          "Klicken oder ENTER drücken um fortzufahren",
           {
             font: "24px Arial",
             fill: "#ffffff",

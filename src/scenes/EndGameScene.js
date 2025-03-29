@@ -140,21 +140,41 @@ export default class EndGameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    // Play again button
+    // Function to restart the game
+    const restartGame = () => {
+      // Add a small visual feedback before refreshing
+      this.add.text(
+        this.scale.width / 2,
+        this.scale.height - 40,
+        "Spiel wird neu gestartet...",
+        {
+          font: "18px Arial",
+          fill: "#ffffff"
+        }
+      ).setOrigin(0.5);
+      
+      // Delay the refresh slightly to show the feedback
+      this.time.delayedCall(500, () => {
+        // Refresh the browser page to restart the game
+        window.location.reload();
+      });
+    };
+    
+    // Play again button - larger and more prominent since it's the only button now
     const playAgainButton = this.add.rectangle(
       this.scale.width / 2,
-      this.scale.height - 150,
-      250,
-      60,
+      this.scale.height - 100,
+      300,
+      70,
       0x00aa00
     ).setInteractive();
     
     this.add.text(
       this.scale.width / 2,
-      this.scale.height - 150,
-      "Nochmal spielen",
+      this.scale.height - 100,
+      "Nochmal spielen (ENTER)",
       {
-        font: "bold 22px Arial",
+        font: "bold 26px Arial",
         fill: "#ffffff"
       }
     ).setOrigin(0.5);
@@ -163,32 +183,13 @@ export default class EndGameScene extends Phaser.Scene {
     playAgainButton.on("pointerover", () => playAgainButton.fillColor = 0x00cc00);
     playAgainButton.on("pointerout", () => playAgainButton.fillColor = 0x00aa00);
     playAgainButton.on("pointerdown", () => playAgainButton.fillColor = 0x009900);
-    playAgainButton.on("pointerup", () => this.scene.start("LogoScene"));
     
-    // Back to title button
-    const backButton = this.add.rectangle(
-      this.scale.width / 2,
-      this.scale.height - 80,
-      250,
-      60,
-      0x555555
-    ).setInteractive();
+    // On button click, refresh the browser to restart the game
+    playAgainButton.on("pointerup", restartGame);
     
-    this.add.text(
-      this.scale.width / 2,
-      this.scale.height - 80,
-      "Zurück zum Titel",
-      {
-        font: "bold 22px Arial",
-        fill: "#ffffff"
-      }
-    ).setOrigin(0.5);
-    
-    // Button effects
-    backButton.on("pointerover", () => backButton.fillColor = 0x777777);
-    backButton.on("pointerout", () => backButton.fillColor = 0x555555);
-    backButton.on("pointerdown", () => backButton.fillColor = 0x444444);
-    backButton.on("pointerup", () => this.scene.start("LogoScene"));
+    // Also allow Enter key to restart the game
+    const enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    enterKey.on('down', restartGame);
     
     // Play victory sound
     try {
