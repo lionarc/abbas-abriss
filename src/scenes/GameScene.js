@@ -17,6 +17,14 @@ export default class GameScene extends Phaser.Scene {
     super("GameScene");
     this.scores = [0, 0]; // Player 1 and Player 2 scores
     this.successSoundPlayed = false; // Track if we've played the success sound
+    this.playerNames = ["Spieler 1", "Spieler 2"]; // Default names
+  }
+  
+  init(data) {
+    // Get player names from previous scene if available
+    if (data && data.playerNames) {
+      this.playerNames = data.playerNames;
+    }
   }
 
   preload() {
@@ -263,9 +271,10 @@ export default class GameScene extends Phaser.Scene {
 
   addScore(playerIndex, points) {
     this.scores[playerIndex] += points;
-    // Vitality boost when scoring points
+    // Reduce vitality boost when scoring points from repairing 
+    // (from 5x to 2x the points value)
     if (this.players[playerIndex]) {
-      this.players[playerIndex].addVitality(points * 5);
+      this.players[playerIndex].addVitality(points * 2);
     }
   }
 
@@ -312,6 +321,15 @@ export default class GameScene extends Phaser.Scene {
       ease: 'Power2',
       yoyo: true,
       repeat: 5
+    });
+
+    // Add a delay before transitioning to end screen
+    this.time.delayedCall(3000, () => {
+      // Transition to the end game scene with scores and player names
+      this.scene.start("EndGameScene", {
+        scores: this.scores,
+        playerNames: this.playerNames
+      });
     });
   }
 }

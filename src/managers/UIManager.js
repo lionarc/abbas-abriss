@@ -25,13 +25,17 @@ export default class UIManager {
       fill: "#000",
     });
     
-    // Player 1 UI (left sidebar)
+    // Player 1 UI (left sidebar) - Use the player's custom name
     const p1X = 10;
     const p1Y = 60;
     let verticalSpacing = 70;
     
     this.player1UI = {
-      title: this.scene.add.text(p1X, 20, "Spieler 1", { font: "bold 24px Arial", fill: "#0000ff" }),
+      title: this.scene.add.text(p1X, 20, this.scene.playerNames[0], { 
+        font: "bold 24px Arial", 
+        fill: "#0000ff",
+        wordWrap: { width: SIDEBAR_WIDTH - 20 }
+      }),
       score: this.scene.add.text(p1X, 60 + verticalSpacing, "Punkte: 0", { font: "18px Arial", fill: "#ffffff" }),
       controls: this.scene.add.text(p1X, 100 + verticalSpacing, "Steuerung:\nWASD - Bewegen\nQ - Zerstören\nE - Reparieren", 
         { font: "16px Arial", fill: "#ffffff", lineSpacing: 5 }),
@@ -40,12 +44,16 @@ export default class UIManager {
         .setOrigin(0, 0)
     };
     
-    // Player 2 UI (right sidebar)
+    // Player 2 UI (right sidebar) - Use the player's custom name
     const p2X = this.scene.scale.width - SIDEBAR_WIDTH + 10;
     const p2Y = 60;
     
     this.player2UI = {
-      title: this.scene.add.text(p2X, 20, "Spieler 2", { font: "bold 24px Arial", fill: "#ff0000" }),
+      title: this.scene.add.text(p2X, 20, this.scene.playerNames[1], { 
+        font: "bold 24px Arial", 
+        fill: "#ff0000",
+        wordWrap: { width: SIDEBAR_WIDTH - 20 }
+      }),
       score: this.scene.add.text(p2X, 60 + verticalSpacing, "Punkte: 0", { font: "18px Arial", fill: "#ffffff" }),
       controls: this.scene.add.text(p2X, 100 + verticalSpacing, "Steuerung:\nIJKL - Bewegen\nO - Zerstören\nU - Reparieren", 
         { font: "16px Arial", fill: "#ffffff", lineSpacing: 5 }),

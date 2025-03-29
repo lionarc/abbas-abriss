@@ -1,5 +1,9 @@
 import Phaser from 'phaser'
+import LogoScene from './scenes/LogoScene.js'
+import MissionScene from './scenes/MissionScene.js'
+import NameEntryScene from './scenes/NameEntryScene.js'
 import GameScene from './scenes/GameScene.js'
+import EndGameScene from './scenes/EndGameScene.js'
 
 // Base dimensions for the game (original design size)
 const BASE_WIDTH = 1168;
@@ -16,7 +20,7 @@ const config = {
       debug: false
     }
   },
-  scene: [GameScene],
+  scene: [LogoScene, MissionScene, NameEntryScene, GameScene, EndGameScene],
   // Scale manager configuration
   scale: {
     mode: Phaser.Scale.FIT,  // Automatically scale the game to fit inside the parent

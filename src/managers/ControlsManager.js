@@ -121,10 +121,12 @@ export default class ControlsManager {
       console.log(`❌ Spieler ${this.player.playerId + 1}: Zu erschöpft zum Reparieren!`);
     } else if (this.player.inventory.holz) {
       this.player.actionSystem.tryRepair();
-      this.player.vitalitySystem.vitality -= 5;
+      // Reduce the vitality cost of repairing to just 2 points (was 5)
+      this.player.vitalitySystem.vitality -= 3;
     } else if (this.player.inventory.fliese > 0) {
       this.player.actionSystem.tryPlaceTile();
-      this.player.vitalitySystem.vitality -= 5;
+      // Reduce the vitality cost of placing a tile to just 2 points (was 5)
+      this.player.vitalitySystem.vitality -= 3;
     } else {
       console.log(`❌ Spieler ${this.player.playerId + 1}: Du hast kein Material zum Reparieren!`);
     }
