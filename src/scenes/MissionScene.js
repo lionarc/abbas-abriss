@@ -39,15 +39,19 @@ export default class MissionScene extends Phaser.Scene {
     // Mission description
     const missionText = [
       "Der Balkon an der P3 ist in einem katastrophalen Zustand!",
-      "Ein Wasserschaden wurde detektiert, sehr lange von der Verwaltung ignoriert, aber nun wurde Abbas Abriss beauftragt.",
+      "Ein Wasserschaden wurde detektiert, sehr lange von der Verwaltung ignoriert,",
+        "aber nun ist es an euch, Abbas Abriss, den Balkon zu reparieren.",
       "",
-      "Eure Aufgabe:",
-      "• Zerschlagt die alten Fliesen mit der Hammer-Taste (Q/O)",
-      "• Holt Holz vom Holzlager, um morsche Balken zu reparieren (E/U)",
-      "• Holt neue Fliesen vom Fliesenlager und verlegt sie (E/U)",
-      "• Achtet auf eure Energie, sammelt Kaffee für einen Boost",
+      "Eure Aufgabe im Team:",
+      "• Zerschlagt die Fliesen, die nach und nach morsch erscheinen",
+      "• Achtung, das kostet Energie!",
+      "• Spieler 1 kann nur Holz holen (3 Stück pro Lauf) - für Balkenreparaturen",
+      "• Spieler 2 kann nur Fliesen holen (4 Stück pro Lauf) - für neue Böden",
+        "Habt ihr zu viel Material, müsst ihr es wegwerfen. Achtung, das kommt auf die Zeit obendrauf",
+      "• Zusammen müsst ihr alle Fliesen reparieren - die Zeit wird gestoppt!",
+      "• Achtet auf eure Energie, sammelt Kaffee für einen 20-Sekunden-Boost",
       "",
-      "Arbeitet als Team zusammen, um den Balkon zu sanieren!"
+      "Arbeitet als Team zusammen, um den Balkon möglichst schnell zu sanieren!"
     ].join("\n");
     
     const textBox = this.add.text(

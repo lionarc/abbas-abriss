@@ -12,21 +12,21 @@ export default class InventorySystem {
    * @returns {boolean} True if wood was added, false if inventory is full
    */
   addWood() {
-    // Can't carry wood if player has tiles
-    if (this.inventory.fliese > 0) {
-      console.log(`❌ Spieler ${this.player.playerId + 1}: Du trägst Fliesen – kein Platz für Holz`);
+    // Only Player 1 can collect wood
+    if (this.player.playerId !== 0) {
+      console.log(`❌ Spieler ${this.player.playerId + 1}: Nur Spieler 1 kann Holz sammeln!`);
       return false;
     }
     
-    // Player already has wood
-    if (this.inventory.holz) {
-      console.log(`📦 Spieler ${this.player.playerId + 1}: Du hast bereits Holz`);
+    // Can't carry wood if already holding some
+    if (this.inventory.holz >= 3) {
+      console.log(`📦 Spieler ${this.player.playerId + 1}: Du trägst bereits maximales Holz`);
       return false;
     }
     
-    // Add wood to inventory
-    this.inventory.holz = true;
-    console.log(`🪵 Spieler ${this.player.playerId + 1}: Holz aufgenommen`);
+    // Add wood to inventory (3 pieces at once)
+    this.inventory.holz = 3;
+    console.log(`🪵 Spieler ${this.player.playerId + 1}: Holz aufgenommen (3 Stück)`);
     
     // Play wood pickup sound
     this.scene.soundManager.playSound('takeWood');
@@ -36,25 +36,24 @@ export default class InventorySystem {
   
   /**
    * Add tiles to the player's inventory
-   * @param {number} amount Number of tiles to add
-   * @returns {boolean} True if tiles were added, false if inventory is full or player has wood
+   * @returns {boolean} True if tiles were added, false if inventory is full
    */
-  addTiles(amount = 3) {
-    // Can't carry tiles if player has wood
-    if (this.inventory.holz) {
-      console.log(`❌ Spieler ${this.player.playerId + 1}: Du trägst Holz – keine Fliesenaufnahme möglich.`);
+  addTiles() {
+    // Only Player 2 can collect tiles
+    if (this.player.playerId !== 1) {
+      console.log(`❌ Spieler ${this.player.playerId + 1}: Nur Spieler 2 kann Fliesen sammeln!`);
       return false;
     }
     
     // Inventory is already full
-    if (this.inventory.fliese >= 3) {
+    if (this.inventory.fliese >= 4) {
       console.log(`📦 Spieler ${this.player.playerId + 1}: Fliesen-Inventar ist bereits voll`);
       return false;
     }
     
-    // Add tiles to inventory
-    this.inventory.fliese = amount;
-    console.log(`🧱 Spieler ${this.player.playerId + 1}: Flieseninventar aufgefüllt auf ${amount}`);
+    // Add tiles to inventory (4 at once)
+    this.inventory.fliese = 4;
+    console.log(`🧱 Spieler ${this.player.playerId + 1}: Flieseninventar aufgefüllt auf 4`);
     
     // Play tile pickup sound
     this.scene.soundManager.playSound('takeTile');
@@ -76,42 +75,42 @@ export default class InventorySystem {
   }
   
   /**
-   * Use wood from inventory
+   * Use a single piece of wood from inventory
    * @returns {boolean} True if wood was used, false if no wood in inventory
    */
   useWood() {
-    if (!this.inventory.holz) {
+    if (this.inventory.holz <= 0) {
       return false;
     }
     
-    this.inventory.holz = false;
+    this.inventory.holz--;
     return true;
   }
   
   /**
    * Clear the entire inventory
-   * @returns {boolean} True if anything was cleared
+   * @returns {number} Number of items that were cleared (for waste penalty)
    */
   clearInventory() {
-    let changed = false;
+    let itemsCleared = 0;
     
     if (this.inventory.holz) {
-      this.inventory.holz = false;
+      itemsCleared += this.inventory.holz;
+      this.inventory.holz = 0;
       console.log(`🪵 Spieler ${this.player.playerId + 1}: Holz in den Müll geworfen`);
-      changed = true;
     }
     
     if (this.inventory.fliese > 0) {
+      itemsCleared += this.inventory.fliese;
       console.log(`🧱 Spieler ${this.player.playerId + 1}: ${this.inventory.fliese} Fliesen entsorgt`);
       this.inventory.fliese = 0;
-      changed = true;
     }
     
-    if (changed) {
-      console.log(`📦 Spieler ${this.player.playerId + 1}: Inventar geleert`);
+    if (itemsCleared > 0) {
+      console.log(`📦 Spieler ${this.player.playerId + 1}: ${itemsCleared} Gegenstände entsorgt (+${itemsCleared}s Strafe)`);
     }
     
-    return changed;
+    return itemsCleared;
   }
   
   /**

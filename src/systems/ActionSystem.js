@@ -76,7 +76,7 @@ export default class ActionSystem {
       this.scene.soundManager.playSound('tileBreak');
       
       // Award points (2 points for breaking a tile)
-      this.scene.addScore(this.player.playerId, 2);
+      this.scene.trackContribution(this.player.playerId, 2);
       console.log(`+2 Punkte für Spieler ${this.player.playerId + 1} (Fliese komplett zerschlagen)`);
       
       this.scene.updateFertigStatus();
@@ -115,7 +115,7 @@ export default class ActionSystem {
     const balkenStatus = tile.data.get("balken");
     const status = tile.data.get("status");
 
-    if (status === "fertig" && balkenStatus === "morsch" && this.player.inventory.holz) {
+    if (status === "fertig" && balkenStatus === "morsch" && this.player.inventory.holz > 0) {
       // Repair the beam
       tile.data.set("balken", "intakt");
       tile.setTexture("tile_kaputt4_intakt");
@@ -127,7 +127,7 @@ export default class ActionSystem {
       this.scene.soundManager.playSound('repairBeam');
       
       // Award points (6 points for repairing a beam)
-      this.scene.addScore(this.player.playerId, 6);
+      this.scene.trackContribution(this.player.playerId, 6);
       console.log(`+6 Punkte für Spieler ${this.player.playerId + 1} (Balken repariert)`);
       
       console.log(`🔧 Spieler ${this.player.playerId + 1}: Balken repariert bei [${col}, ${row}]`);
@@ -177,7 +177,7 @@ export default class ActionSystem {
       this.scene.soundManager.playSound('placeTile');
       
       // Award points (3 points for placing a new tile)
-      this.scene.addScore(this.player.playerId, 3);
+      this.scene.trackContribution(this.player.playerId, 3);
       console.log(`+3 Punkte für Spieler ${this.player.playerId + 1} (Neue Fliese verlegt)`);
       
       console.log(`🧱 Spieler ${this.player.playerId + 1}: Neue Fliese verlegt bei [${col}, ${row}]`);

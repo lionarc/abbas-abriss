@@ -15,9 +15,13 @@ export const SIDEBAR_WIDTH = 200; // Width of each sidebar
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super("GameScene");
-    this.scores = [0, 0]; // Player 1 and Player 2 scores
-    this.successSoundPlayed = false; // Track if we've played the success sound
-    this.playerNames = ["Spieler 1", "Spieler 2"]; // Default names
+    this.scores = [0, 0]; // Repurposed for tracking penalties
+    this.successSoundPlayed = false; 
+    this.playerNames = ["Spieler 1", "Spieler 2"];
+    this.startTime = 0; // Track when the game starts
+    this.completionTime = 0; // Track how long it took to complete
+    this.timerActive = false; // Whether the timer is currently running
+    this.wasteCount = 0; // Count items thrown away as penalties
   }
   
   init(data) {
@@ -87,6 +91,9 @@ export default class GameScene extends Phaser.Scene {
     this.coffeeAvailable = false;
     this.coffeeSprite = null;
     this.startCoffeeSystem();
+    
+    // Start the game timer
+    this.startGameTimer();
   }
 
   setupGameWorld() {
@@ -251,6 +258,59 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  startGameTimer() {
+    this.startTime = this.time.now;
+    this.timerActive = true;
+    
+    // Create timer text
+    this.timerText = this.add.text(
+      SIDEBAR_WIDTH + 10, 
+      40, 
+      "Zeit: 00:00", 
+      {
+        font: "20px Arial",
+        fill: "#000",
+      }
+    );
+    
+    // Update timer every second
+    this.time.addEvent({
+      delay: 100, // Update more frequently for accuracy
+      callback: this.updateTimer,
+      callbackScope: this,
+      loop: true
+    });
+  }
+  
+  updateTimer() {
+    if (!this.timerActive) return;
+    
+    const elapsed = this.time.now - this.startTime;
+    this.completionTime = elapsed;
+    
+    // Format time as mm:ss.ms
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+    const ms = Math.floor((elapsed % 1000) / 10);
+    
+    this.timerText.setText(`Zeit: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`);
+  }
+  
+  stopTimer() {
+    this.timerActive = false;
+    
+    // Add waste penalty to completion time (1 second per wasted item)
+    this.completionTime += (this.wasteCount * 1000);
+    
+    // Format final time
+    const elapsed = this.completionTime;
+    const minutes = Math.floor(elapsed / 60000);
+    const seconds = Math.floor((elapsed % 60000) / 1000);
+    const ms = Math.floor((elapsed % 1000) / 10);
+    
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+  }
+
   update(time, delta) {
     // Update players
     if (this.players && this.players.length === 2) {
@@ -269,13 +329,18 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  addScore(playerIndex, points) {
-    this.scores[playerIndex] += points;
-    // Reduce vitality boost when scoring points from repairing 
-    // (from 5x to 2x the points value)
+  addWastePenalty(playerIndex, items) {
+    // Each wasted item adds penalty seconds
+    this.scores[playerIndex] += items;
+    this.wasteCount += items;
+    
+    // Still give vitality boost to player for gameplay purposes
     if (this.players[playerIndex]) {
-      this.players[playerIndex].addVitality(points * 2);
+      this.players[playerIndex].addVitality(items * 2);
     }
+    
+    // Update UI to show the new penalty count
+    this.uiManager.updatePlayerUI();
   }
 
   updateFertigStatus() {
@@ -292,18 +357,22 @@ export default class GameScene extends Phaser.Scene {
       this.successSoundPlayed = true;
       console.log("🎉 Alle Fliesen wurden erfolgreich repariert!");
       
-      this.displayVictoryMessage();
+      // Stop the timer when complete
+      const finalTime = this.stopTimer();
+      console.log(`Team completed in: ${finalTime}`);
+      
+      this.displayVictoryMessage(finalTime);
       
       // Full vitality boost for all players when the game is won
       this.players.forEach(player => player.addVitality(100));
     }
   }
 
-  displayVictoryMessage() {
+  displayVictoryMessage(finalTime) {
     // Display a victory message
     const victoryText = this.add.text(
       this.scale.width / 2, 
-      this.scale.height / 2, 
+      this.scale.height / 2 - 60, 
       "ALLE FLIESEN REPARIERT!", 
       { 
         font: "bold 32px Arial", 
@@ -313,22 +382,50 @@ export default class GameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    // Make it blink
+    // Display the waste penalty
+    const penaltyText = this.add.text(
+      this.scale.width / 2, 
+      this.scale.height / 2, 
+      `Verschwendete Materialien: ${this.wasteCount} (+${this.wasteCount}s)`, 
+      { 
+        font: "20px Arial", 
+        fill: "#ff9900",
+        backgroundColor: "#000000",
+        padding: { x: 20, y: 10 } 
+      }
+    ).setOrigin(0.5);
+    
+    // Display the completion time
+    const timeText = this.add.text(
+      this.scale.width / 2, 
+      this.scale.height / 2 + 50, 
+      `Team Zeit: ${finalTime}`, 
+      { 
+        font: "bold 28px Arial", 
+        fill: "#ffff00",
+        backgroundColor: "#000000",
+        padding: { x: 20, y: 10 } 
+      }
+    ).setOrigin(0.5);
+    
+    // Make them blink
     this.tweens.add({
-      targets: victoryText,
+      targets: [victoryText, penaltyText, timeText],
       alpha: { from: 1, to: 0 },
       duration: 500,
       ease: 'Power2',
       yoyo: true,
       repeat: 5
     });
-
+    
     // Add a delay before transitioning to end screen
     this.time.delayedCall(3000, () => {
-      // Transition to the end game scene with scores and player names
+      // Transition to end game scene with waste count, time and player names
       this.scene.start("EndGameScene", {
         scores: this.scores,
-        playerNames: this.playerNames
+        playerNames: this.playerNames,
+        completionTime: this.completionTime,
+        wasteCount: this.wasteCount
       });
     });
   }

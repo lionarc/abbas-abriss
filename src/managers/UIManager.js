@@ -25,7 +25,7 @@ export default class UIManager {
       fill: "#000",
     });
     
-    // Player 1 UI (left sidebar) - Use the player's custom name
+    // Player 1 UI (left sidebar) - Wood specialist
     const p1X = 10;
     const p1Y = 60;
     let verticalSpacing = 70;
@@ -36,7 +36,12 @@ export default class UIManager {
         fill: "#0000ff",
         wordWrap: { width: SIDEBAR_WIDTH - 20 }
       }),
-      score: this.scene.add.text(p1X, 60 + verticalSpacing, "Punkte: 0", { font: "18px Arial", fill: "#ffffff" }),
+      role: this.scene.add.text(p1X, p1Y + 20, "Holz-Spezialist", {
+        font: "16px Arial",
+        fill: "#ffffff",
+        fontStyle: "italic"
+      }),
+      score: this.scene.add.text(p1X, 60 + verticalSpacing, "Verschwendet: 0", { font: "18px Arial", fill: "#ffffff" }),
       controls: this.scene.add.text(p1X, 100 + verticalSpacing, "Steuerung:\nWASD - Bewegen\nQ - Zerstören\nE - Reparieren", 
         { font: "16px Arial", fill: "#ffffff", lineSpacing: 5 }),
       vitalityText: this.scene.add.text(p1X, p1Y, "Energie:", { font: "18px Arial", fill: "#ffffff" }),
@@ -44,7 +49,7 @@ export default class UIManager {
         .setOrigin(0, 0)
     };
     
-    // Player 2 UI (right sidebar) - Use the player's custom name
+    // Player 2 UI (right sidebar) - Tile specialist
     const p2X = this.scene.scale.width - SIDEBAR_WIDTH + 10;
     const p2Y = 60;
     
@@ -54,7 +59,12 @@ export default class UIManager {
         fill: "#ff0000",
         wordWrap: { width: SIDEBAR_WIDTH - 20 }
       }),
-      score: this.scene.add.text(p2X, 60 + verticalSpacing, "Punkte: 0", { font: "18px Arial", fill: "#ffffff" }),
+      role: this.scene.add.text(p2X, p2Y + 20, "Fliesen-Spezialist", {
+        font: "16px Arial",
+        fill: "#ffffff",
+        fontStyle: "italic"
+      }),
+      score: this.scene.add.text(p2X, 60 + verticalSpacing, "Verschwendet: 0", { font: "18px Arial", fill: "#ffffff" }),
       controls: this.scene.add.text(p2X, 100 + verticalSpacing, "Steuerung:\nIJKL - Bewegen\nO - Zerstören\nU - Reparieren", 
         { font: "16px Arial", fill: "#ffffff", lineSpacing: 5 }),
       vitalityText: this.scene.add.text(p2X, p2Y, "Energie:", { font: "18px Arial", fill: "#ffffff" }),
@@ -65,7 +75,7 @@ export default class UIManager {
   
   updatePlayerUI() {
     // Update Player 1 UI
-    this.player1UI.score.setText(`Punkte: ${this.scene.scores[0]}`);
+    this.player1UI.score.setText(`Verschwendet: ${this.scene.scores[0]}`);
     if (this.scene.players[0]) {
       const vitalityWidth = 140 * (this.scene.players[0].vitality / 100);
       this.player1UI.vitalityBar.width = vitalityWidth;
@@ -81,7 +91,7 @@ export default class UIManager {
     }
     
     // Update Player 2 UI
-    this.player2UI.score.setText(`Punkte: ${this.scene.scores[1]}`);
+    this.player2UI.score.setText(`Verschwendet: ${this.scene.scores[1]}`);
     if (this.scene.players[1]) {
       const vitalityWidth = 140 * (this.scene.players[1].vitality / 100);
       this.player2UI.vitalityBar.width = vitalityWidth;

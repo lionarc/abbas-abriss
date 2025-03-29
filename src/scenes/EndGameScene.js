@@ -8,6 +8,8 @@ export default class EndGameScene extends Phaser.Scene {
   init(data) {
     this.scores = data.scores || [0, 0];
     this.playerNames = data.playerNames || ["Spieler 1", "Spieler 2"];
+    this.completionTime = data.completionTime || 0;
+    this.wasteCount = data.wasteCount || 0;
   }
 
   preload() {
@@ -16,29 +18,14 @@ export default class EndGameScene extends Phaser.Scene {
   }
 
   create() {
-    // Determine the winner
-    let winnerIndex, winnerText;
-    if (this.scores[0] > this.scores[1]) {
-      winnerIndex = 0;
-      winnerText = `${this.playerNames[0]} gewinnt!`;
-    } else if (this.scores[1] > this.scores[0]) {
-      winnerIndex = 1;
-      winnerText = `${this.playerNames[1]} gewinnt!`;
-    } else {
-      winnerIndex = -1;
-      winnerText = "Unentschieden!";
-    }
-    
-    // Background based on winner
-    let bgColor = 0x0066ff;
-    if (winnerIndex === 0) {
-      bgColor = 0x0000cc; // Blue for player 1
-    } else if (winnerIndex === 1) {
-      bgColor = 0xcc0000; // Red for player 2
-    }
+    // Format the completion time
+    const minutes = Math.floor(this.completionTime / 60000);
+    const seconds = Math.floor((this.completionTime % 60000) / 1000);
+    const ms = Math.floor((this.completionTime % 1000) / 10);
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
     
     // Create background
-    this.add.rectangle(0, 0, this.scale.width, this.scale.height, bgColor)
+    this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0066ff)
       .setOrigin(0, 0)
       .setAlpha(0.4);
     
@@ -75,11 +62,11 @@ export default class EndGameScene extends Phaser.Scene {
       console.warn("Could not load trophy image:", error);
     }
     
-    // Winner announcement
-    const winnerTextObj = this.add.text(
+    // Team time announcement
+    const timeTextObj = this.add.text(
       this.scale.width / 2,
       220,
-      winnerText,
+      `Team Zeit: ${formattedTime}`,
       {
         font: "bold 40px Arial",
         fill: "#ffffff",
@@ -88,20 +75,24 @@ export default class EndGameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    // Make winner text pulse
-    this.tweens.add({
-      targets: winnerTextObj,
-      scale: { from: 1, to: 1.1 },
-      duration: 800,
-      yoyo: true,
-      repeat: -1
-    });
-    
-    // Scores
+    // Add waste penalty display
     this.add.text(
       this.scale.width / 2,
-      300,
-      "Endergebnis:",
+      280,
+      `Zeitstrafe: +${this.wasteCount} Sekunden`,
+      {
+        font: "24px Arial",
+        fill: "#ff9900",
+        stroke: "#000000",
+        strokeThickness: 4
+      }
+    ).setOrigin(0.5);
+    
+    // Contributions header now about waste
+    this.add.text(
+      this.scale.width / 2,
+      320,
+      "Verschwendete Materialien:",
       {
         font: "bold 24px Arial",
         fill: "#ffffff",
@@ -110,10 +101,10 @@ export default class EndGameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    // Player 1 score
+    // Player 1 waste
     this.add.text(
-      this.scale.width / 2 - 100,
-      350,
+      this.scale.width / 2 - 150,
+      360,
       `${this.playerNames[0]}: ${this.scores[0]}`,
       {
         font: "20px Arial",
@@ -123,14 +114,27 @@ export default class EndGameScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    // Player 2 score
+    // Player 2 waste
     this.add.text(
-      this.scale.width / 2 + 100,
-      350,
+      this.scale.width / 2 + 150,
+      360,
       `${this.playerNames[1]}: ${this.scores[1]}`,
       {
         font: "20px Arial",
         fill: "#ff0000",
+        stroke: "#000000",
+        strokeThickness: 4
+      }
+    ).setOrigin(0.5);
+    
+    // Display team total waste
+    this.add.text(
+      this.scale.width / 2,
+      400,
+      `Gesamt: ${this.wasteCount}`,
+      {
+        font: "bold 24px Arial",
+        fill: "#ffffff",
         stroke: "#000000",
         strokeThickness: 4
       }

@@ -15,7 +15,12 @@ export default class Player {
     
     // Initialize systems
     this.controls = new ControlsManager(this);
-    this.inventory = { holz: false, fliese: 0 };
+    
+    // Set up different inventory capacities for each player
+    this.inventory = playerId === 0 
+      ? { holz: 0, fliese: 0 } // Player 1 (Holz specialist)
+      : { holz: 0, fliese: 0 }; // Player 2 (Fliesen specialist)
+      
     this.inventorySystem = new InventorySystem(this);
     this.actionSystem = new ActionSystem(this);
     this.vitalitySystem = new VitalitySystem(this);

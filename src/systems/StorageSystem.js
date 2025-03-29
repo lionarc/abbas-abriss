@@ -59,9 +59,12 @@ export default class StorageSystem {
       // Sound is now played inside the addTiles method
     });
 
-    // Muellplatz overlap
+    // Muellplatz overlap - add waste penalty when items are thrown away
     this.scene.physics.add.overlap(player.sprite, this.muellplatz, () => {
-      if (player.inventorySystem.clearInventory()) {
+      const itemsDiscarded = player.inventorySystem.clearInventory();
+      if (itemsDiscarded > 0) {
+        // Apply waste penalty and play sound
+        this.scene.addWastePenalty(player.playerId, itemsDiscarded);
         this.scene.soundManager.playSound('trash');
       }
     });

@@ -14,6 +14,7 @@ export default class VitalitySystem {
     this.coffeeEffectTimer = null;
     this.coffeeEffectActive = false;
     this.coffeeIcon = null;
+    this.coffeeDuration = 20000; // Increased to 20 seconds (from 15)
 
     // Store the original player scale for resetting after coffee effect
     this.originalPlayerScale = player.sprite.scale;
@@ -67,16 +68,38 @@ export default class VitalitySystem {
       // Add energy boost - larger boost of 50 points
       this.addVitality(50);
       
-      console.log(`☕ Player ${this.player.playerId + 1} got energy boost and is immune to energy loss for 15 seconds!`);
+      console.log(`☕ Player ${this.player.playerId + 1} got energy boost and is immune to energy loss for 20 seconds!`);
+      
+      // Show duration message to player
+      const durationText = this.scene.add.text(
+        this.player.sprite.x,
+        this.player.sprite.y - 80,
+        "20s Energieschutz!",
+        {
+          font: "14px Arial",
+          fill: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 3
+        }
+      ).setOrigin(0.5);
+      
+      // Fade out the duration message
+      this.scene.tweens.add({
+        targets: durationText,
+        alpha: 0,
+        y: durationText.y - 20,
+        duration: 2000,
+        onComplete: () => durationText.destroy()
+      });
       
       // Cancel existing timer if there is one
       if (this.coffeeEffectTimer) {
         this.coffeeEffectTimer.remove();
       }
       
-      // Set timer to remove coffee effect after a certain duration
+      // Set timer to remove coffee effect after 20 seconds
       this.coffeeEffectTimer = this.scene.time.delayedCall(
-        15000, // 15 seconds
+        this.coffeeDuration, // 20 seconds
         this.removeCoffeeEffect,
         [],
         this
@@ -105,6 +128,28 @@ export default class VitalitySystem {
     }
     
     console.log(`☕ Player ${this.player.playerId + 1}'s coffee effect has worn off.`);
+    
+    // Show expired message to player
+    const expiredText = this.scene.add.text(
+      this.player.sprite.x,
+      this.player.sprite.y - 50,
+      "Kaffee-Effekt vorbei!",
+      {
+        font: "14px Arial",
+        fill: "#ff9900",
+        stroke: "#000000",
+        strokeThickness: 3
+      }
+    ).setOrigin(0.5);
+    
+    // Fade out the expired message
+    this.scene.tweens.add({
+      targets: expiredText,
+      alpha: 0,
+      y: expiredText.y - 20,
+      duration: 2000,
+      onComplete: () => expiredText.destroy()
+    });
   }
   
   isExhausted() {
