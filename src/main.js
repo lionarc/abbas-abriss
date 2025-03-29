@@ -25,6 +25,25 @@ const config = {
     height: BASE_HEIGHT,
     autoCenter: Phaser.Scale.CENTER_BOTH // Center the game canvas
   },
+  // Input configuration to ensure keyboard events work properly
+  input: {
+    keyboard: {
+      capture: [
+        Phaser.Input.Keyboard.KeyCodes.W,
+        Phaser.Input.Keyboard.KeyCodes.A,
+        Phaser.Input.Keyboard.KeyCodes.S,
+        Phaser.Input.Keyboard.KeyCodes.D,
+        Phaser.Input.Keyboard.KeyCodes.Q,
+        Phaser.Input.Keyboard.KeyCodes.E,
+        Phaser.Input.Keyboard.KeyCodes.I,
+        Phaser.Input.Keyboard.KeyCodes.J,
+        Phaser.Input.Keyboard.KeyCodes.K,
+        Phaser.Input.Keyboard.KeyCodes.L,
+        Phaser.Input.Keyboard.KeyCodes.O,
+        Phaser.Input.Keyboard.KeyCodes.U
+      ]
+    }
+  },
   autoRound: false // Prevent rounding which can cause scaling artifacts
 }
 
