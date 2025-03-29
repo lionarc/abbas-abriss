@@ -55,7 +55,8 @@ export default class StorageSystem {
 
     // Fliesenlager overlap
     this.scene.physics.add.overlap(player.sprite, this.fliesenlager, () => {
-      player.inventorySystem.addTiles(3);
+      const tilesAdded = player.inventorySystem.addTiles(3);
+      // Sound is now played inside the addTiles method
     });
 
     // Muellplatz overlap

@@ -55,6 +55,10 @@ export default class InventorySystem {
     // Add tiles to inventory
     this.inventory.fliese = amount;
     console.log(`🧱 Spieler ${this.player.playerId + 1}: Flieseninventar aufgefüllt auf ${amount}`);
+    
+    // Play tile pickup sound
+    this.scene.soundManager.playSound('takeTile');
+    
     return true;
   }
   

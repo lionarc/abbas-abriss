@@ -34,6 +34,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("tile_kaputt4_intakt", "/assets/tile_kaputt4_intakt.png");
     this.load.image("tile_kaputt4_morsch", "/assets/tile_kaputt4_morsch.png");
     this.load.image("abbas2", "/assets/abbas.png");
+    this.load.image("coffee", "/assets/coffee.png");
     
     // Load sound effects
     this.load.audio('hammer_tile', '/assets/sounds/tile_click.mp3');
@@ -44,6 +45,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.audio('trash', '/assets/sounds/trash.mp3');
     this.load.audio('drink', '/assets/sounds/drink.mp3');
     this.load.audio('take_wood', '/assets/sounds/take_wood.mp3');
+    this.load.audio('take_tile', '/assets/sounds/take_tile.mp3');
   }
 
   create() {
@@ -72,6 +74,11 @@ export default class GameScene extends Phaser.Scene {
     // Initial UI update
     this.updateFertigStatus();
     this.uiManager.updatePlayerUI();
+    
+    // Initialize coffee system
+    this.coffeeAvailable = false;
+    this.coffeeSprite = null;
+    this.startCoffeeSystem();
   }
 
   setupGameWorld() {
@@ -126,6 +133,114 @@ export default class GameScene extends Phaser.Scene {
       },
       loop: false,
     });
+  }
+
+  startCoffeeSystem() {
+    // Create coffee sprite (initially hidden)
+    this.coffeeSprite = this.add.image(0, 0, "coffee");
+    
+    // Set a fixed scale for the coffee sprite based on the tile size
+    const coffeeScale = TILE_SIZE / 128; // Adjust if your coffee image has a different size
+    this.coffeeSprite.setScale(coffeeScale);
+    
+    this.coffeeSprite.setVisible(false);
+    this.physics.add.existing(this.coffeeSprite, false);
+    this.coffeeSprite.body.setSize(TILE_SIZE, TILE_SIZE);
+    
+    // Add player overlaps with coffee
+    this.players.forEach(player => {
+      this.physics.add.overlap(player.sprite, this.coffeeSprite, () => {
+        if (this.coffeeAvailable) {
+          this.collectCoffee(player);
+        }
+      });
+    });
+    
+    // Schedule first coffee spawn
+    this.time.delayedCall(
+      Phaser.Math.Between(5000, 15000), // 5-15 seconds delay
+      this.spawnCoffee,
+      [],
+      this
+    );
+  }
+  
+  spawnCoffee() {
+    if (!this.coffeeAvailable) {
+      // Get all tiles that aren't empty or in a transition state
+      const validTiles = this.gridSystem.grid.flat().filter(tile => {
+        const status = tile.data.get("status");
+        return status === "fertig" || status === "final" || status === "leer" || status === "aktiv";
+      });
+      
+      if (validTiles.length > 0) {
+        // Choose a random tile
+        const randomTile = Phaser.Utils.Array.GetRandom(validTiles);
+        
+        // Position coffee on this tile
+        this.coffeeSprite.x = randomTile.x;
+        this.coffeeSprite.y = randomTile.y;
+        this.coffeeSprite.setVisible(true);
+        this.coffeeSprite.body.enable = true;
+        this.coffeeAvailable = true;
+        
+        console.log("☕ Coffee spawned at", randomTile.x, randomTile.y);
+        
+        // Add a little animation to make it noticeable without changing the scale permanently
+        this.tweens.add({
+          targets: this.coffeeSprite,
+          alpha: { from: 0.6, to: 1 },
+          duration: 300,
+          ease: 'Bounce',
+          yoyo: true,
+          repeat: 2
+        });
+      }
+    }
+  }
+  
+  collectCoffee(player) {
+    if (this.coffeeAvailable) {
+      console.log(`Player ${player.playerId + 1} collected coffee!`);
+      
+      // Play coffee drink sound
+      this.soundManager.playSound('drink');
+      
+      // Hide coffee
+      this.coffeeSprite.setVisible(false);
+      this.coffeeSprite.body.enable = false;
+      this.coffeeAvailable = false;
+      
+      // Apply coffee effect to player
+      player.vitalitySystem.applyCoffeeEffect();
+      
+      // Visual feedback
+      const coffeeEffect = this.add.text(
+        this.coffeeSprite.x, 
+        this.coffeeSprite.y, 
+        "☕", 
+        { font: "32px Arial", stroke: "#000", strokeThickness: 3 }
+      ).setOrigin(0.5);
+      
+      // Keep the coffee emoji at a consistent size
+      coffeeEffect.setScale(1);
+      
+      this.tweens.add({
+        targets: coffeeEffect,
+        y: coffeeEffect.y - 50,
+        alpha: { from: 1, to: 0 },
+        duration: 1000,
+        onComplete: () => coffeeEffect.destroy()
+      });
+      
+      // Schedule next coffee spawn
+      this.time.delayedCall(
+        Phaser.Math.Between(20000, 40000), // 20-40 seconds delay
+        this.spawnCoffee,
+        [],
+        this
+      );
+    }
   }
 
   update(time, delta) {

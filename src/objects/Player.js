@@ -35,8 +35,10 @@ export default class Player {
     }
     
     if (this.sprite.height > 0) {
-      const scale = 74 / this.sprite.height;
-      this.sprite.setScale(scale);
+      // Store the desired scale as a property on the sprite itself for reference
+      const baseScale = 74 / this.sprite.height;
+      this.sprite.setScale(baseScale);
+      this.sprite.baseScale = baseScale; // Store for reference
     }
 
     this.scene.physics.add.existing(this.sprite, false);

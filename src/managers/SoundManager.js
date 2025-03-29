@@ -15,7 +15,8 @@ export default class SoundManager {
         success: this.scene.sound.add('success'),
         trash: this.scene.sound.add('trash'),
         drink: this.scene.sound.add('drink'),
-        takeWood: this.scene.sound.add('take_wood')
+        takeWood: this.scene.sound.add('take_wood'),
+        takeTile: this.scene.sound.add('take_tile')
       };
       console.log("Sound effects loaded successfully");
     } catch (error) {
@@ -29,7 +30,8 @@ export default class SoundManager {
         success: { play: () => {} },
         trash: { play: () => {} },
         drink: { play: () => {} },
-        takeWood: { play: () => {} }
+        takeWood: { play: () => {} },
+        takeTile: { play: () => {} }
       };
     }
   }

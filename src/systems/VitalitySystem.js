@@ -14,6 +14,9 @@ export default class VitalitySystem {
     this.coffeeEffectTimer = null;
     this.coffeeEffectActive = false;
     this.coffeeIcon = null;
+
+    // Store the original player scale for resetting after coffee effect
+    this.originalPlayerScale = player.sprite.scale;
   }
   
   update(delta, isMoving) {
@@ -61,10 +64,10 @@ export default class VitalitySystem {
         this.coffeeIcon.setVisible(true);
       }
       
-      // Add energy boost
-      this.addVitality(30);
+      // Add energy boost - larger boost of 50 points
+      this.addVitality(50);
       
-      console.log(`☕ Player ${this.player.playerId + 1} is now immune to energy loss for 15 seconds!`);
+      console.log(`☕ Player ${this.player.playerId + 1} got energy boost and is immune to energy loss for 15 seconds!`);
       
       // Cancel existing timer if there is one
       if (this.coffeeEffectTimer) {
@@ -78,11 +81,24 @@ export default class VitalitySystem {
         [],
         this
       );
+      
+      // Add a pulse animation instead of scaling up the player permanently
+      this.scene.tweens.add({
+        targets: this.player.sprite,
+        scale: { from: this.originalPlayerScale * 1.2, to: this.originalPlayerScale },
+        duration: 300,
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: 1
+      });
     }
   }
   
   removeCoffeeEffect() {
     this.coffeeEffectActive = false;
+    
+    // Reset the player scale to original size
+    this.player.sprite.setScale(this.originalPlayerScale);
     
     if (this.coffeeIcon) {
       this.coffeeIcon.setVisible(false);
